@@ -1,0 +1,46 @@
+{
+    "name": "Test Generator Development",
+    "image": "mcr.microsoft.com/devcontainers/universal:latest",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "enableNonRootDocker": "true",
+            "moby": true
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-docker",
+                          "/workspaces/salesforce/.devcontainer/testcase-generator-1.0.0.vsix"
+            ]
+        }
+    },
+    "onCreateCommand": "echo 'Starting container setup...'",
+    "updateContentCommand": [
+        "curl -fsSL https://ollama.com/install.sh | sh",
+        "echo 'Ollama installation completed'"
+    ],
+    "postCreateCommand": {
+        "start-ollama": "ollama serve &",
+        "wait-ollama": "sleep 10",
+        "pull-models": [
+            "ollama pull gemma:2b",
+            "ollama pull codellama:latest"
+        ]
+    },
+    "postStartCommand": {
+        "ensure-ollama": "pgrep ollama || ollama serve &",
+        "verify-models": [
+            "ollama list"
+        ]
+    },
+    "remoteUser": "codespace",
+    "hostRequirements": {
+        "memory": "8gb",
+        "cpus": 4
+    },
+    "remoteEnv": {
+        "OLLAMA_HOST": "http://localhost:11434"
+    }
+}
